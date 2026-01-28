@@ -4,7 +4,7 @@
 ;   Purpose: Load TRACERS ephemeris data to local machine
 ;
 ; :Keywords:
-;   data_filenames: bidirectional, optional, any
+;   data_filenames: bidirectional, optional, Array<String>
 ;     Placeholder docs for argument, keyword, or property
 ;   datatype: in, optional, str arr
 ;     ['def','predict']
@@ -17,6 +17,9 @@
 ;     Directory path for Ephemeris files (default 'https://tracers-portal.physics.uiowa.edu/teams')
 ;   revision: in, optional, str
 ;     data version number to put in file (defaults to most recent)
+;   spacecraft: in, optional, Array<String>
+;     ['ts1','ts2']
+;     spacecraft handle to put in file (defaults to 'ts2')
 ;   trange: in, optional, str or double arr
 ;     load data for all files within a given range (one day granularity,
 ;     supercedes file list, if not set then 'timerange' will be called)
@@ -26,25 +29,9 @@
 ;     username (case-sensitive) to get into the TRACERS user portal
 ;   version: in, optional, str
 ;     software version number to put in file (defaults to most recent)
-;   instrument: in, optional, Array<String>
-;     'efi'
-;     instrument handle to put into file ('efi')
-;   level: in, optional, str
-;     ['l2','l1a', 'l1b']
-;     level of data to put into file (defaults to l2)
-;   no_server: in, optional, Boolean
-;     if set, will not go looking for files remotely (not operational yet!!)
-;   spacecraft: in, optional, Array<String>
-;     ['ts1','ts2']
-;     spacecraft handle to put in file (defaults to 'ts2')
 ;
 ; :Note to friends!:
 ;   Change the undefined local path variable to whereever you want to place your TRACERS data!
-;
-; :Future plans:
-;   - update datatypes to load in a given called datatype, currently loads all
-;   - update tplot section to make tplot work
-;     - input files keyword to specify if full filename is given or just dates
 ;
 ; :Examples:
 ;
@@ -57,6 +44,7 @@
 pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   downloadonly = downloadonly, trange = trange, datatype = datatype, $
   url_username = url_username, url_password = url_password, $
+  spacecraft = spacecraft, $
   version = version, revision = revision, $
   data_filenames = data_filenames
   compile_opt idl2
@@ -67,6 +55,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   if undefined(version) then version = '**' ; default to latest
   if undefined(revision) then revision = '**' ; default to latest
   if undefined(datatype) then datatype = ['def'] ; default to definitive
+  if undefined(spacecraft) then spacecraft = ['ts2'] else spacecraft = [strlowcase(spacecraft)] ; default to ts2
 
   if ~isa(datatype, /array, /string) then datatype = [datatype] ; make sure its an array
 
@@ -125,9 +114,10 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
       ; if user specifies, then return filenames of where the data has been saved to back to the user
       data_filenames = [data_filenames, dnld_paths]
     end ; predictive solutions
-
-    if tplot then begin
-      tracers_eph_tplot, data_filenames
-    end ; tplot solar wind data
   endfor ; dates
+
+  if tplot then begin
+    tracers_eph_tplot, data_filenames
+    stop
+  end ; tplot solar wind data
 end
