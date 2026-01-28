@@ -16,6 +16,7 @@ conventions for data download and loading.
 - Jasper Halekas' ACE L2 load routines
 
 ## Notes
+- You will need to update the tracers_init.pro before running any of this code!!
 - Can only load in one spacecraft at a time (TS1 or TS2)
 
 ## Future Capabilities?
@@ -25,6 +26,8 @@ conventions for data download and loading.
 
 ## Basic Usage
 ```idl
+
+; Update the tracers_init file to your benefit!
 tracers_init
 
 timespan, '2025-09-26', 1 ; one day of data
