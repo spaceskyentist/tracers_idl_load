@@ -6,6 +6,9 @@
 ; :Keywords:
 ;   data_filenames: bidirectional, optional, any
 ;     Placeholder docs for argument, keyword, or property
+;   datatype: in, optional, str arr
+;     ['def','predict']
+;     datatype handle for file (defaults to definitive solutions for ephemeris data)
 ;   downloadonly: in, optional, any
 ;     if set, will only load in data - not create tplot variables
 ;   local_path: in, optional, str
@@ -23,9 +26,6 @@
 ;     username (case-sensitive) to get into the TRACERS user portal
 ;   version: in, optional, str
 ;     software version number to put in file (defaults to most recent)
-;   datatype: in, optional, str arr
-;     ['eac', 'edc', 'edc-bor', 'edc-roi', 'ehf', 'hsk', 'vdc-bor', 'vdc-roi']
-;     datatype handle for file (defaults to all datatypes)
 ;   instrument: in, optional, Array<String>
 ;     'efi'
 ;     instrument handle to put into file ('efi')
@@ -55,7 +55,7 @@
 ;
 ;-
 pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
-  downloadonly = downloadonly, trange = trange, $
+  downloadonly = downloadonly, trange = trange, datatype = datatype, $
   url_username = url_username, url_password = url_password, $
   version = version, revision = revision, $
   data_filenames = data_filenames
@@ -66,6 +66,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   if keyword_set(downloadonly) then tplot = 0 else tplot = 1 ; if you want to only download the data, not tplot
   if undefined(version) then version = '**' ; default to latest
   if undefined(revision) then revision = '**' ; default to latest
+  if undefined(datatype) then datatype = ['def'] ; default to definitive
 
   if undefined(url_username) or undefined(url_password) then begin
     check = getenv('TRACERS_USER_PASS')
@@ -101,13 +102,27 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
     mm = strmid(dates[i], 4, 2)
     dd = strmid(dates[i], 6, 2)
 
-    sw_path = '/flight/SOC/ancillary/solarwind/'
-    fn_i = sw_path + 'swpc_sw_' + dates[i] + '_v' + version + '.cdf'
-    dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
-      url_username = url_username, url_password = url_password)
+    if datatype eq 'def' then begin ; definitive solutions
+      eph_path = '/flight/SOC/' + strupcase(spacecraft) + '/ead/def/'
+      fn_i = eph_path + strlowcase(spacecraft) + '_def_ead_' + dates[i] + '_v' + version + '.cdf'
 
-    ; if user specifies, then return filenames of where the data has been saved to back to the user
-    if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
+      dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
+        url_username = url_username, url_password = url_password)
+
+      ; if user specifies, then return filenames of where the data has been saved to back to the user
+      if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
+    end ; definitive solutions
+
+    if datatype eq 'predict' then begin ; predictive solutions
+      eph_path = eph_path = '/flight/SOC/' + strupcase(spacecraft) + '/ead/predict/'
+      fn_i = eph_path + strlowcase(spacecraft) + '_pred_ead_' + dates[i] + '_v' + version + '.cdf'
+
+      dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
+        url_username = url_username, url_password = url_password)
+
+      ; if user specifies, then return filenames of where the data has been saved to back to the user
+      if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
+    end ; predic solutions
 
     if tplot then begin
       tracers_sw_tplot, dnld_paths
