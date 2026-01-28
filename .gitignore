@@ -1,0 +1,102 @@
+# Ignore Python virtual environment
+#my-venv-name/
+.venv/
+venv/
+.env/
+env/
+
+# Ignore VS Code settings
+.vscode/
+
+# Byte-compiled / cache files
+__pycache__/
+*.pyc
+
+# Ignore system files
+.DS_Store
+
+# Ignore files with sensitive information
+tracers_login.pro
+
+# Ignore data files to save space - people should download these themselves
+*.cdf
+
+# ============================
+# IDL / SPEDAS
+# ============================
+
+# Compiled IDL files
+*.sav
+
+# IDL temp / backup files
+*.pro~
+*.bak
+*.tmp
+*.idl~
+*.old
+
+# IDL runtime state
+*.xdr
+*.dat
+
+# SPEDAS / CDF artifacts (never commit data)
+*.cdf
+*.cdf~
+*.cdf.tmp
+
+# Downloaded data directories
+data/
+Data/
+TRACERS_data/
+FAST_data/
+OMNI_data/
+
+
+# ============================
+# Logs / Outputs
+# ============================
+
+*.log
+*.out
+*.err
+
+# Figures (keep code-only repo clean)
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.pdf
+*.eps
+*.svg
+
+# ============================
+# Editors / OS
+# ============================
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# ============================
+# Python (in case helpers creep in)
+# ============================
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+
+# ============================
+# Misc
+# ============================
+
+# Scratch files
+scratch/
+tmp/
