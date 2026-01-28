@@ -1,34 +1,60 @@
 ;+
 ; :Description:
-;   Load solar wind data from the TRACERS website
+;   Procedure: TRACERS_EPH_LOAD
+;   Purpose: Load TRACERS ephemeris data to local machine
 ;
 ; :Keywords:
-;   data_filenames: in, optional, str
-;     string array of where data filenames are stored
-;   downloadonly: bidirectional, optional, Boolean
-;     set keyword if no tplot is wanted
-;   local_path: bidirectional, optional, str
-;     where to save data onto local machine e.g. home directory or external hard drive)
-;   remote_path: bidirectional, optional, str
-;     TRACERS website
-;   revision: bidirectional, optional, str
-;     revision version of data to download, default to latest
-;   trange: bidirectional, optional, double or str
-;     array containing dates/times to search for data on website (e.g. from timespan)
-;   url_password: bidirectional, optional, str
-;     password for TRACERS website
-;   url_username: bidirectional, optional, str
-;     username to TRACERS website
-;   version: bidirectional, optional, str
-;     version of data to download, default to latest
+;   data_filenames: bidirectional, optional, any
+;     Placeholder docs for argument, keyword, or property
+;   downloadonly: in, optional, any
+;     if set, will only load in data - not create tplot variables
+;   local_path: in, optional, str
+;     Directory path on your local device where downloaded files will be saved
+;   remote_path: in, optional, str
+;     Directory path for Ephemeris files (default 'https://tracers-portal.physics.uiowa.edu/teams')
+;   revision: in, optional, str
+;     data version number to put in file (defaults to most recent)
+;   trange: in, optional, str or double arr
+;     load data for all files within a given range (one day granularity,
+;     supercedes file list, if not set then 'timerange' will be called)
+;   url_password: in, optional, str
+;     password (case-sensitive) to get into the TRACERS user portal
+;   url_username: in, optional, str
+;     username (case-sensitive) to get into the TRACERS user portal
+;   version: in, optional, str
+;     software version number to put in file (defaults to most recent)
+;   datatype: in, optional, str arr
+;     ['eac', 'edc', 'edc-bor', 'edc-roi', 'ehf', 'hsk', 'vdc-bor', 'vdc-roi']
+;     datatype handle for file (defaults to all datatypes)
+;   instrument: in, optional, Array<String>
+;     'efi'
+;     instrument handle to put into file ('efi')
+;   level: in, optional, str
+;     ['l2','l1a', 'l1b']
+;     level of data to put into file (defaults to l2)
+;   no_server: in, optional, Boolean
+;     if set, will not go looking for files remotely (not operational yet!!)
+;   spacecraft: in, optional, Array<String>
+;     ['ts1','ts2']
+;     spacecraft handle to put in file (defaults to 'ts2')
 ;
-; :Notes:
-;   Written by SRS Jan 2026
-;   Updates
-;   Future work: - make sure datafilenames returns multiple dates
+; :Note to friends!:
+;   Change the undefined local path variable to whereever you want to place your TRACERS data!
+;
+; :Future plans:
+;   - update datatypes to load in a given called datatype, currently loads all
+;   - update tplot section to make tplot work
+;     - input files keyword to specify if full filename is given or just dates
+;
+; :Examples:
+;
+;   timespan, '2025-09-26', 1 ; one day of data
+;
+; :Created by:
+;   Sky Shaver    Jan 2026
 ;
 ;-
-pro tracers_sw_load, remote_path = remote_path, local_path = local_path, $
+pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   downloadonly = downloadonly, trange = trange, $
   url_username = url_username, url_password = url_password, $
   version = version, revision = revision, $

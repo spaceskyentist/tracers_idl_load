@@ -44,7 +44,6 @@
 ;     software version number to put in file (defaults to most recent)
 ;
 ; :Note to friends!:
-;   The tplot capabilities of this does not work yet!!!!!!!!!! (Nov 19, 2025)
 ;   Change the undefined local path variable to whereever you want to place your TRACERS data!
 ;
 ; :Future plans:
@@ -118,6 +117,8 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
   d_names_l2 = ['edc-roi', 'edc', 'ehf', 'vdc', 'hsk', 'eac']
   d_names_l1a = ['eac', 'edc-bor', 'edc-roi', 'ehf', 'vdc-bor', 'vdc-roi']
   d_names_l1b = ['eac', 'edc-bor', 'edc-roi', 'ehf', 'hsk', 'vdc-bor', 'vdc-roi']
+
+  data_filenames = []
 
   for i = 0, nfiles - 1 do begin
     print, '...'
@@ -239,7 +240,7 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
     end ; fetch level 1a data
 
     ; if user specifies, then return filenames of where the data has been saved to back to the user
-    if keyword_set(data_filenames) then data_filenames = dnld_paths
+    if keyword_set(data_filenames) then data_filenames = [data_filenames, dnld_paths]
 
     ; THIS TPLOT SECTION IS STILL BEING WORKED ON! This will load the files into tplot variables,
     ; but the times are off!
