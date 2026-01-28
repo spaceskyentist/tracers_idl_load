@@ -119,6 +119,5 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
 
   if tplot then begin
     tracers_eph_tplot, data_filenames
-    stop
   end ; tplot solar wind data
 end
