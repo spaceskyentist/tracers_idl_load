@@ -1,15 +1,15 @@
 ;+
 ; :Arguments:
 ;   filenames: bidirectional, required, str
-;     Placeholder docs for argument, keyword, or property
+;     path and filenames to get to cdf files to convert to tplot
 ;
 ; :Examples:
-;   tracers_sw_tplot
-;   This command sets the tplot options for TRACERS SW data
+;   tracers_sw_tplot, fn
+;   This command sets the tplot options for TRACERS Solar wind data
 ;
 ; :Notes:
-;   This procedure assumes that the relevant TRACERS Eph data has already been
-;   loaded in using tracers_eph_load.
+;   This procedure assumes that the relevant TRACERS sw data has already been
+;   loaded in using tracers_sw_load.
 ;   MODIFICATION HISTORY:
 ;   Written by Skylar Shaver, Jan 2026
 ;
