@@ -11,6 +11,7 @@ conventions for data download and loading.
 
 ## Requirements
 - IDL 
+- IDL-colorbars from planetarymike [github repo here](https://github.com/planetarymike/IDL-Colorbars)
 
 
 ## Basic Usage
