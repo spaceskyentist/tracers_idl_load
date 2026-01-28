@@ -11,7 +11,7 @@ conventions for data download and loading.
 
 ## Requirements
 - IDL 
-- SPEDAS routines (e.g. `tplot`)
+- SPEDAS routines (e.g. `tplot`) from [SPEDAS wiki here](https://spedas.org/wiki/index.php?title=Downloads_and_Installation)
 - IDL-colorbars routines (e.g. `loadcv`) from planetarymike [github repo here](https://github.com/planetarymike/IDL-Colorbars)
 
 ## Notes
