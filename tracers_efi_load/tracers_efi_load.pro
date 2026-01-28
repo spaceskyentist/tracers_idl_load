@@ -9,8 +9,8 @@
 ;       (not needed if timespan is set)
 ;
 ; :Keywords:
-;   data_filenames: bidirectional, optional, any
-;     Placeholder docs for argument, keyword, or property
+;   data_filenames: in, optional, Array<String>
+;     string array containing path and file names where ACE data is saved on local machine
 ;   datatype: in, optional, str arr
 ;     ['eac', 'edc', 'edc-bor', 'edc-roi', 'ehf', 'hsk', 'vdc-bor', 'vdc-roi']
 ;     datatype handle for file (defaults to all datatypes)
