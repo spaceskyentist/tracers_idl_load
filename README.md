@@ -38,3 +38,7 @@ tracers_efi_load, spacecraft='ts1', level='l1b', datatype = ['edc','hsk'] ; load
 ; Solar Wind Data Load
 ;-----------------------------------
 tracers_sw_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; load solar wind data onto external HD
+
+; Ephemeris/Orbit Data Load
+;-----------------------------------
+tracers_eph_load, datatype = ['pred', 'def'] ; loads predictive and defnitive data 
