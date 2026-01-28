@@ -112,7 +112,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
         url_username = url_username, url_password = url_password)
 
       ; if user specifies, then return filenames of where the data has been saved to back to the user
-      if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
+      data_filenames = [data_filenames, dnld_paths]
     end ; definitive solutions
 
     if total(datatype.contains('predict')) ge 1 then begin ; predictive solutions
@@ -123,11 +123,11 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
         url_username = url_username, url_password = url_password)
 
       ; if user specifies, then return filenames of where the data has been saved to back to the user
-      if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
+      data_filenames = [data_filenames, dnld_paths]
     end ; predictive solutions
 
     if tplot then begin
-      tracers_eph_tplot, dnld_paths
+      tracers_eph_tplot, data_filenames
     end ; tplot solar wind data
   endfor ; dates
 end

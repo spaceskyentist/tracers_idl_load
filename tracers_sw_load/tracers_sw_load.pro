@@ -81,10 +81,10 @@ pro tracers_sw_load, remote_path = remote_path, local_path = local_path, $
       url_username = url_username, url_password = url_password)
 
     ; if user specifies, then return filenames of where the data has been saved to back to the user
-    if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
-
-    if tplot then begin
-      tracers_sw_tplot, dnld_paths
-    end ; tplot solar wind data
+    data_filenames = [data_filenames, dnld_paths]
   endfor ; dates
+
+  if tplot then begin
+    tracers_sw_tplot, data_filenames
+  end ; tplot solar wind data
 end

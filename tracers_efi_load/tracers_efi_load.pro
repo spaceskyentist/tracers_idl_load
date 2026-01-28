@@ -240,14 +240,14 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
     end ; fetch level 1a data
 
     ; if user specifies, then return filenames of where the data has been saved to back to the user
-    if keyword_set(data_filenames) then data_filenames = [data_filenames, dnld_paths]
+    data_filenames = [data_filenames, dnld_paths]
 
     ; THIS TPLOT SECTION IS STILL BEING WORKED ON! This will load the files into tplot variables,
     ; but the times are off!
     ;
 
     if tplot then begin
-      tracers_efi_tplot, dnld_paths, spacecraft = spacecraft, level = level
+      tracers_efi_tplot, data_filenames, spacecraft = spacecraft, level = level
 
       ; check time range
       if keyword_set(trange) then begin
