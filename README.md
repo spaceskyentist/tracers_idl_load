@@ -10,9 +10,8 @@ conventions for data download and loading.
 - SPEDAS-compatible naming
 
 ## Requirements
-- IDL 8.8+
-- SPEDAS (IDL)
-- CDF support
+- IDL 
+
 
 ## Basic Usage
 ```idl
