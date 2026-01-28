@@ -25,7 +25,6 @@
 ; :Notes:
 ;   Written by SRS Jan 2026
 ;   Updates
-;   Future work: - make sure datafilenames returns multiple dates
 ;
 ;-
 pro tracers_sw_load, remote_path = remote_path, local_path = local_path, $
