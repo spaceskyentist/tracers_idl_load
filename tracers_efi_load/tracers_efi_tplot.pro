@@ -18,7 +18,7 @@
 ;    This command sets the tplot options for TRACERS EFI data.
 ;   NOTES:
 ;    This procedure assumes that the relevant TRACERS EFI data has already been
-;    loaded into tplot variables using tracers_efi_load.
+;    loaded using tracers_efi_load.
 ;   MODIFICATION HISTORY:
 ;    Written by Skylar Shaver, Jan 2026
 ;
@@ -26,14 +26,14 @@
 ;     - Add customization for ts1 vs ts2 spacecraft on tplot options
 ;
 ; :Arguments:
-;   filenames: bidirectional, required, any
-;     Placeholder docs for argument, keyword, or property
+;   filenames: bidirectional, required, Array<String>
+;     path and filenames to cdf files to convert to tplot variables
 ;
 ; :Keywords:
-;   level: bidirectional, optional, any
-;     Placeholder docs for argument, keyword, or property
-;   spacecraft: bidirectional, optional, any
-;     Placeholder docs for argument, keyword, or property
+;   level: bidirectional, optional, str
+;     which level of data to create tplot variables for
+;   spacecraft: bidirectional, optional, str
+;     which spacecraft to create tplot variables for
 ;
 ;-
 pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
