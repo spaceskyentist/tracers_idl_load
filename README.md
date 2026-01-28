@@ -16,4 +16,6 @@ conventions for data download and loading.
 
 ## Basic Usage
 ```idl
+tracers_init
+
 tracers_load, trange=['2025-01-01','2025-01-02'], datatype='efield'
