@@ -107,6 +107,9 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
   if tplot and (total(level.contains('l2')) ge 1) then begin
     dirname = file_dirname(data_filenames, /mark_directory)
     dirname = dirname[0].remove(-8)
-    tracers_ace_load_l2_data, files = dates, trange = trange, path = dirname, sv = strlowcase(spacecraft), /tplot, /chare
-  end ; tplot solar wind data
+    dtmp = strmid(dates, 2)
+    tra_ace_load_l2_data, trange = trange, path = dirname, sv = strlowcase(spacecraft[0]), /tplot, /chare
+    stop
+  end ; tplot
+  stop
 end
