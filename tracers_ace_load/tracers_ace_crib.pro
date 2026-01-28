@@ -1,6 +1,7 @@
 compile_opt idl2
 @'qualcolors' ; you have the qualcolors library available
 .compile loadcv
+.compile loadcsvcolorbar
 
 device, true = 24, decompose = 0, retain = 2
 loadcv, 39 ; load rainbow+white color table
@@ -8,6 +9,11 @@ loadcv, 39 ; load rainbow+white color table
 ; initialize for TRACERS (team only)
 tracers_init
 tracers_login ; set your TRACERS portal username and password
+
+; compile
+.compile tracers_ace_load
+.compile tra_ace_load_l2_data
+.compile tra_ace_make_info_str
 
 ; download the data
 timespan, '2025-09-26', 1 ; one day of data
