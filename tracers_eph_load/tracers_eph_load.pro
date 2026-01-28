@@ -68,6 +68,8 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   if undefined(revision) then revision = '**' ; default to latest
   if undefined(datatype) then datatype = ['def'] ; default to definitive
 
+  if ~isa(datatype, /array, /string) then datatype = [datatype] ; make sure its an array
+
   if undefined(url_username) or undefined(url_password) then begin
     check = getenv('TRACERS_USER_PASS')
     if check eq '' then begin
@@ -102,7 +104,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
     mm = strmid(dates[i], 4, 2)
     dd = strmid(dates[i], 6, 2)
 
-    if datatype eq 'def' then begin ; definitive solutions
+    if total(datatype.contains('def')) ge 1 then begin ; definitive solutions
       eph_path = '/flight/SOC/' + strupcase(spacecraft) + '/ead/def/'
       fn_i = eph_path + strlowcase(spacecraft) + '_def_ead_' + dates[i] + '_v' + version + '.cdf'
 
@@ -113,7 +115,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
       if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
     end ; definitive solutions
 
-    if datatype eq 'predict' then begin ; predictive solutions
+    if total(datatype.contains('predict')) ge 1 then begin ; predictive solutions
       eph_path = eph_path = '/flight/SOC/' + strupcase(spacecraft) + '/ead/predict/'
       fn_i = eph_path + strlowcase(spacecraft) + '_pred_ead_' + dates[i] + '_v' + version + '.cdf'
 
@@ -122,10 +124,10 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
 
       ; if user specifies, then return filenames of where the data has been saved to back to the user
       if keyword_set(data_filenames) then data_filenames = [datafilenames, dnld_paths]
-    end ; predic solutions
+    end ; predictive solutions
 
     if tplot then begin
-      tracers_sw_tplot, dnld_paths
+      tracers_eph_tplot, dnld_paths
     end ; tplot solar wind data
   endfor ; dates
 end
