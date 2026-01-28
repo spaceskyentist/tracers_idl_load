@@ -109,7 +109,5 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
     dirname = dirname[0].remove(-8)
     dtmp = strmid(dates, 2)
     tra_ace_load_l2_data, trange = trange, path = dirname, sv = strlowcase(spacecraft[0]), /tplot, /chare
-    stop
   end ; tplot
-  stop
 end
