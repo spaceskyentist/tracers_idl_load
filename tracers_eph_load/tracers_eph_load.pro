@@ -55,6 +55,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   if undefined(version) then version = '**' ; default to latest
   if undefined(revision) then revision = '**' ; default to latest
   if undefined(datatype) then datatype = ['def'] ; default to definitive
+  datatype[where(datatype eq 'pred', /null)] = 'predict' ; in case someone used 'pred' instead of predict
   if undefined(spacecraft) then spacecraft = ['ts2'] else spacecraft = [strlowcase(spacecraft)] ; default to ts2
 
   if ~isa(datatype, /array, /string) then datatype = [datatype] ; make sure its an array
@@ -105,7 +106,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
     end ; definitive solutions
 
     if total(datatype.contains('predict')) ge 1 then begin ; predictive solutions
-      eph_path = eph_path = '/flight/SOC/' + strupcase(spacecraft) + '/ead/predict/'
+      eph_path = '/flight/SOC/' + strupcase(spacecraft) + '/ead/predict/'
       fn_i = eph_path + strlowcase(spacecraft) + '_pred_ead_' + dates[i] + '_v' + version + '.cdf'
 
       dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
