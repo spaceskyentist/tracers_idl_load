@@ -3,6 +3,15 @@
 ;   filenames: bidirectional, required, any
 ;     Placeholder docs for argument, keyword, or property
 ;
+; :Notes:
+;   This procedure assumes that the relevant TRACERS Eph data has already been
+;   loaded in using tracers_eph_load.
+;   MODIFICATION HISTORY:
+;   Written by Skylar Shaver, Jan 2026
+;
+; :Future work:
+;   - set colors for vectors and other limit information
+;
 ;-
 pro tracers_eph_tplot, filenames
   compile_opt idl2
@@ -18,10 +27,16 @@ pro tracers_eph_tplot, filenames
     endif
     filenames = filenames[indx]
 
-    cdf2tplot, files = filenames, varformat = '*', tplotnames = tvars_sw, suffix = '_eph'
+    tmp = file_basename(filenames)
+    suf = '_eph_' + strmid(tmp, 4, 3) ; suffix for variables def or pre (definitive or predictive)
 
-    stop
-  endif ; over filenames found
+    tvars = []
+
+    for ifil = 0, nfilesexists - 1 do begin
+      cdf2tplot, files = filenames[ifil], varformat = '*', suffix = suf[ifil]
+      tvars = [tvars, tnames()]
+    end ; for files
+  endif ; over filenames found check
 end
 
 ; program
