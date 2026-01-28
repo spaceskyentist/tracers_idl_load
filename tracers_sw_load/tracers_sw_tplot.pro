@@ -3,6 +3,16 @@
 ;   filenames: bidirectional, required, str
 ;     Placeholder docs for argument, keyword, or property
 ;
+; :Examples:
+;   tracers_sw_tplot
+;   This command sets the tplot options for TRACERS SW data
+;
+; :Notes:
+;   This procedure assumes that the relevant TRACERS Eph data has already been
+;   loaded in using tracers_eph_load.
+;   MODIFICATION HISTORY:
+;   Written by Skylar Shaver, Jan 2026
+;
 ;-
 pro tracers_sw_tplot, filenames
   compile_opt idl2
