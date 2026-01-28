@@ -12,7 +12,7 @@
 ;   data_filenames: bidirectional, optional, any
 ;     Placeholder docs for argument, keyword, or property
 ;   datatype: in, optional, str arr
-;     ['eac' 'edc-bor' 'edc-roi' 'ehf' 'hsk' 'vdc-bor' 'vdc-roi']
+;     ['eac', 'edc', 'edc-bor', 'edc-roi', 'ehf', 'hsk', 'vdc-bor', 'vdc-roi']
 ;     datatype handle for file (defaults to all datatypes)
 ;   downloadonly: in, optional, any
 ;     if set, will only load in data - not create tplot variables
@@ -74,7 +74,7 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
 
   if undefined(local_path) then local_path = '/Volumes/wvushaverhd/TRACERS_data' ; where to save your downloaded data
   if undefined(remote_path) then remote_path = 'https://tracers-portal.physics.uiowa.edu/teams'
-  if undefined(spacecraft) then spacecraft = ['ts2'] else spacecraft = strlowcase(spacecraft) ; default to ts2
+  if undefined(spacecraft) then spacecraft = ['ts2'] else spacecraft = [strlowcase(spacecraft)] ; default to ts2
   if undefined(level) then level = 'l2' else level = strlowcase(level)
   if undefined(instrument) then instrument = 'EFI' else instrument = strupcase(instrument)
   if undefined(version) then version = '**' ; default to latest
