@@ -19,6 +19,7 @@ conventions for data download and loading.
 - Can only load in one spacecraft at a time (TS1 or TS2)
 
 ## Future Capabilities?
+- MAG, MSC, MAGIC, ACI
 - Load in both spacecraft data (ts1 and ts2)
 - Email Sky with what you want! <skylar.shaver@mail.wvu.edu>
 
