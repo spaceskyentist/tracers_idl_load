@@ -1,3 +1,6 @@
+# Ignore files with sensitive information
+tracers_login.pro
+
 # Ignore Python virtual environment
 #my-venv-name/
 .venv/
@@ -15,8 +18,6 @@ __pycache__/
 # Ignore system files
 .DS_Store
 
-# Ignore files with sensitive information
-tracers_login.pro
 
 # Ignore data files to save space - people should download these themselves
 *.cdf
