@@ -1,0 +1,451 @@
+=== Geophysical Frames ===
+
+R. Roglans
+
+GEI Frames:
+---------------------------------------------------------
+
+      The Geocentric Equatorial Inertial System (GEI) has its X-axis pointing
+      from the Earth towards the first point of Aries (the position of the Sun
+      at the vernal equinox). This direction is the intersection of the Earth's
+      equatorial plane and the ecliptic plane and thus the X-axis lies in both
+      planes. The Z-axis is parallel to the rotation axis of the Earth and Y
+      completes the right-handed orthogonal set (Y = Z x X).
+
+           X: Direction of from the Earth to the first point in Ares (the
+              position of the Sun at the vernal equinox).
+           Z: Along the spin axis of the Earth, pointing northward.
+           Y: Z_GEI cross X_GEI .
+              
+
+      The precession and nutation of the equinox complicates the implementation
+      of this frame. Precession is the cyclic movement of the first point of
+      Aries about the celestial sphere, which has a period of roughly 26,000
+      years. Superimposed on this is what is called the nutation of the equinox,
+      which are higher order oscillations which cause deviations off of the
+      mean. The terms 'Mean-of-date' refers to frame or coordinate system where
+      only precession is used. The term 'True-of-date' adds on the nutation and
+      is the actual best representation for the first point of Aries at a given
+      epoch. These are implemented as GEI_MOD and GEI_TOD respectively.
+
+      For a frame to be truly inertial, you must define the first point of Aries
+      and the rotation axis for a specific epoch. The SPICE built-in inertial
+      frame J2000, is a utilization of this concept. The GEI2000 frame is
+      therefore defined to be an alias for J2000, where this is implemented by
+      using the identity matrix. This is also an alias for EME2000 and ECI2000.
+
+
+GEO Frame:
+---------------------------------------------------------
+
+      The geographic coordinate system (GEO) is defined so that its X-axis is in
+      the Earth's equatorial plane but is fixed with the rotation of the Earth
+      so that it passes through the Greenwich meridian (0 degrees longitude).
+      Its Z-axis is parallel to the rotation axis of the Earth, and its Y-axis
+      completes a right-handed orthogonal set (Y= Z x X).
+
+           Z: Along the spin axis of the Earth, pointing northward.
+           X: Direction from the Earth’s center, in the plane perpendicular to
+              the spin axis (the equatorial plane), that goes through the 0
+              degrees longitude reference meridian (commonly referred to as the
+              Greenwich meridian).
+           Y: Z_GEO cross X_GEO .
+
+      TRACERS uses the high-precision ITRF93 Earth frame that is provided in the
+      binary SPK file available for the Earth.
+
+
+GSE Frame:
+---------------------------------------------------------
+
+      This is the definition for the GSE frame that is provided in SPICE's
+      "frames required reading" document (2021 version).
+
+           X: Direction of true_of_epoch, geometric, vector from the
+              Earth to the Sun
+           Z: Direction of X_GSE cross Sun_from_Earch_velocity_vector, with
+              the latter being the true_of_epoch, geometric, velocity vector of
+              the Sun as seen from the Earth. I.e., perpendicular to the
+              instantaneous ecliptic, pointing northward.
+           Y: Z_GSE cross X_GSE direction. The +Y direction then pointing
+              opposite the direction of the Earth's orbital motion, in the plane
+              of the ecliptic (in general).
+
+       - This is true-of-epoch, as it uses the Earth-Sun position and velocity
+         at the epoch of calculation. This assumes that the Sun and Earth
+         ephemerides incorporate both precession and nutation (and whatever
+         other small motion the eliptic may have with time).
+
+
+MAG Frame:
+---------------------------------------------------------
+
+      "The geomagnetic coordinate system (MAG) is defined so that its Z-axis is
+      parallel to the Earth's magnetic centered dipole axis. The geographic
+      coordinates of the dipole axis from the International Geomagnetic
+      Reference Field... The Y-axis of this system is perpendicular to the
+      geographic poles such that if D is the dipole position and S is the south
+      pole Y=DxS. Finally, the X-axis completes a right-handed orthogonal set."
+
+           Z: Along the vector from the center of the Earth through the north
+              pole of the IGRF-14 CD.
+           Y: In the direction of Z_GEO cross Z_MAG.
+           X: Y_MAG cross Z_MAG.
+
+      The implementation of this frame is complicated in that the definition of
+      the IGRF dipole is a function of time and the IGRF model cannot be
+      directly incorporated into SPICE. Instead, an external routine has been
+      used to calculate, using the IGRF coefficients, the GEO locations of the
+      Centered Dipole north poles at a discrete set of epochs, with a cadence of
+      1 day. These are then used to calculate quaternions that transform from
+      the GEO to the MAG frame at each epoch. This MAG frame is achieved by
+      first rotating the GEO frame about the Z-axis by the GEO longitude of the
+      north MAG pole, and then rotating about the Y-axis by the latitude of the
+      north MAG pole. Finally, these quaternions are input to the msopck utility
+      function provided with SPICE, generating a CK kernel which can then
+      transform between GEO and MAG for any epoch within the range spanned by
+      the input quaternions.
+
+      The current MAG CK kernel was created using the IGRF-14 model. The
+      validity ranges for the that version of the model are as follows:
+
+                  Definitive           Provisional   Predict    Not Valid
+       |------------------------------|+++++++++++|###########|???????????|
+     19xx                           2020        2025        2030        2035
+
+      Note that since the rest of the magnetic-dipole-based frames are defined
+      from this one, similar validity ranges apply for those frames.
+
+
+GSM Frame:
+---------------------------------------------------------
+
+      "The geocentric solar magnetospheric system (GSM), as with both the
+      GSE and GSEQ systems, has its X-axis from the Earth to the Sun. The
+      Y-axis is defined to be perpendicular to the Earth's magnetic dipole
+      so that the X-Z plane contains the dipole axis. The positive Z- axis
+      is chosen to be in the same sense as the northern magnetic pole. The
+      difference between the GSM system and the GSE and GSEQ is simply a
+      rotation about the X-axis."
+
+           X: Direction of the geometric vector from the Earth to the Sun.
+           Y: In the direction of Z_MAG cross X_GSM
+           Z: X_GSM cross Y_GSM .
+
+      Thus, +X is identical as GSE +X and is the primary, and +Z is the
+      secondary and is the MAG +Z.
+
+
+SM Frame:
+---------------------------------------------------------
+
+      "In solar magnetic coordinates (SM) the Z-axis is chosen parallel to
+      the north magnetic pole and the Y-axis perpendicular to the Earth-Sun
+      line towards dusk. The difference between this system and the GSM
+      system is a rotation about the Y-axis. The amount of rotation is
+      simply the dipole tilt angle as defined in the previous section. We
+      note that in this system the X-axis does not point directly at the
+      Sun. As with the GSM system, the SM system rotates with both a yearly
+      and daily period with respect to inertial coordinates."
+
+           Z: Along the vector from the center of the Earth through the north
+              pole of the IGRF-14 CD.
+           Y: In the direction of Z_SM cross R_ES (R_ES = geometric
+              Earth-to-Sun.
+           X: Y_SM cross Z_SM .
+
+      Thus, this is much like GSM, except that now the +Z axis is the
+      primary, meaning it is parallel to the dipole vector, and +X is the
+      secondary. Since the X-Z plane is the same as GSM's X-Z plane, the Y
+      axis is the same as GSM.
+
+
+
+
+=== Spacecraft-Specific Frames ===
+
+Note: Replace "TS1" with "TS2" for TRACERS-2 frames.
+
+
+TRACERS Spacecraft Coordinate System (TS1_TSCS) Frame Definition             
+----------------------------------------------------------------------------------
+
+   The fundamental spacecraft-fixed coordinate system is the TRACERS Spacecraft
+   Coordinate System (TSCS). Instrument and any other spacecraft coordinate
+   systems will reference and transform to and from TSCS. The origin of the TSCS
+   is at the geometric center of the launch vehicle adaptor ring on the
+   separation interface plane, with that separation plane being 26.67 mm
+   offset from the Motorized LightBand (MLB) attachment datum plane. Note that
+   this origin is NOT at the center of mass of the spacecraft.
+
+   The axes are defined by:
+
+           Z: Along the geometric center of, and theoretical [zero error] spin
+              axis through, the spacecraft
+           X: Perpendicular to Z_TSCS, out from the origin along the theoretical
+              [zero error] deployed EFI-1 sensor
+           Y: Z_TSCS cross X_TSCS direction, nominally along the deployed EFI-3
+              sensor
+
+
+TRACERS Spinning Body (TS1_TSB) Frame Definition             
+----------------------------------------------------------------------------------
+
+   This is the TRACERS Spinning Body frame. It uses the actual measured spin
+   axis of the spacecraft as its primary defining vector, and the X_TSCS axis as
+   the secondary defining vector.
+
+   This frame is specified by a CK kernel that is created using the angular
+   velocity vectors provided by the spacecraft Guidance, Navigation and Control
+   (GNC) system at a nominal 1-second cadence. The frame axes are defined by:
+
+           Z: Along direction of positive angular velocity vector of spacecraft
+           Y: Z_TSB cross X_TSCS direction
+           X: Y_TSB cross Z_TSB direction
+
+
+ACE Instrument (TS1_ACE) Frame Definitions
+----------------------------------------------------------------------------------
+
+   ACE is oriented to achieve a desired B-field alignment. The ACE X,Y,Z axes
+   are parallel to the TSCS axes. The +X ACE axis projects outward from the
+   spacecraft deck. The +Z ACE axis will nominally be parallel to the LABF in
+   the ROI.
+
+
+ACI Instrument (TS1_ACI) Frame Definitions
+----------------------------------------------------------------------------------              
+
+   The ACI axes are parallel to the TSCS axes. The X axis projects inward from
+   the spacecraft deck. The Z axis is parallel to the TSCS Z axis, and is
+   nominally parallel to the +B field in the ROI. The ACI Polar Anlge is zero at
+   the ACI -Z axis, which is also the direction from which precipitating ions
+   will nominally arrive, and is the location of ACI anode #4. The ACI Polar
+   Angle increases from Y to Z ACI. The ACI Azimuthal Angle increases and
+   follows the spacecraft rotation.
+
+
+EFI Instrument (TS1_EFI) Frame Definitions
+----------------------------------------------------------------------------------
+
+    There are 4 EFI sensors. EFI1 and EFI2 define the EFI X axis and are
+    parallel to the TSCS X axis, with EFI1 in the +X direction. EFI3 and EFI4
+    define the EFI Y axis and are parallel to the TSCS Y axis, with EFI3 in the
+    +Y direction. The EFI X and Y axes are orthogonal to the nominal [zero
+    error] spacecraft spin axis.
+
+
+MAG Instrument (TS1_MAG) Frame Definitions
+----------------------------------------------------------------------------------
+
+   The MAG sensor is mounted at the end of a bracket fixed to the spacecraft
+   face that is midway between the -X and +Y TSCS axes. The MAG axes are
+   orthogonal to the bracket fixture, with the +Z MAG axis aligned with the +Z
+   TSCS axis and the +Y MAG axis outward along the bracket. The result is that
+   the MAG frame is rotated about +Z TSCS by +45 degrees.
+
+
+                                    ^
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |+Z_TSCS (in)
+                      <-------------x-------------> +X_TSCS
+                                .` .|
+                     MAGIC--> .`M.` |
+                            .` .`   |
+                          .` .`     |
+                        .` .`       |
+                 MAG-->`M `         |
+                                    |
+                                    v +Y_TSCS
+                      +Z_MAG (in)
+                    .x.
+                  .`   `.
+                .`       `.
+              .`           `.
+            .`               `.
+           `+Y_MAG             ` +X_MAG
+
+
+MSC Instrument (TS1_MSC) Frame Definitions
+----------------------------------------------------------------------------------
+
+   From [4],
+
+   The MSC sensor is mounted at the end of a bracket fixed to the spacecraft
+   face that is midway between the +X and -Y TSCS axes. The MSC axes are
+   orthogonal to the TSCS frame, but are rotated such that +X MSC = -Y TSCS,
+   +Y MSC = -X TSCS and +Z MSC = -Z TSCS.
+
+
+                                                      ^ +X_MSC
+                                                      |
+                                                      |
+                                                      |
+                                                      |
+                                                      |
+                                                      |
+                                                      |
+                                 +Y_MSC <-------------o +Z_MSC (out)
+                           ^
+                           |           .         
+                           |         .`M.`<-- MSC
+                           |       .` .`         
+                           |     .` .`           
+                           |   .` .`             
+                           | .` .`               
+                           |` .`                 
+             <-------------x.------------> +X_TSCS
+                           |+Z_TSCS (in)
+                           |
+                           |
+                           |
+                           |
+                           |
+                           |
+                           v +Y_TSCS
+
+
+MAGIC Instrument (TS1_MAGIC) Frame Definitions
+----------------------------------------------------------------------------------
+
+   The MAGIC sensor is mounted on the same bracket as MAG, which is fixed to the
+   spacecraft face that is midway between the -X and +Y TSCS axes. The MAGIC
+   axes are orthogonal to the bracket fixture, with the +Z MAGIC axis aligned
+   with the +Z TSCS axis and the +X MAG axis inward along the bracket. The
+   result is that the MAG frame is rotated about +Z TSCS by -45 degrees.
+
+
+
+                                 ^
+                                 |
+                                 |
+                                 |
+                                 |
+                                 |
+                                 |
+                                 |+Z_TSCS (in)
+                   <-------------x-------------> +X_TSCS
+                             .` .|
+                  MAGIC--> .`M.` |
+                         .` .`   |
+                       .` .`     |
+                     .` .`       |
+              MAG-->`M `         |
+                                 |
+                                 v +Y_TSCS
+
+                    . +X_MAGIC
+                  .`
+                .`
+              .`
+            .`
+          .`
+         x. +Z_MAGIC (in)
+           `.
+             `.
+               `.
+                 `.
+                   ` +Y_MAGIC
+
+
+North East Center (TS1_NEC) Science Frame:
+---------------------------------------------------------
+
+      This is an implementation of the North East Center (NEC) frame that was
+      used on Swarm, which has the Z axis pointing from the spacecraft to the
+      center of the Earth, the Y axis perpendicular to the Z axis, pointing in
+      the eastward direction, and the X axis completes the right-handed set,
+      pointing in the geographically (i.e., on the surface of a ~spherical body)
+      north direction.
+
+      For a SPICE two-vector frame, the practical definition uses the
+      spacecraft-to-Earth vector (defining +Z) as the primary vector and the GEO
+      Z axis as the secondary vector (defining +Y as the direction perpendicular
+      to both the spacecraft-to-Earth vector and Z_GEO.
+
+           Z: Spacecraft-to-Earth vector
+           Y: Direction Z_NEC cross Z_GEO  (Eastward)
+           X: Y_NEC cross Z_NEC direction  (Northward)
+
+
+Field-Aligned Coordinates (TS1_FAC) Science Frame:
+---------------------------------------------------------
+
+      This is the Field-Aligned Coordinates frame, which is a basic IGRF-14
+      B-field aligned frame. It is a re-creation of the FAC frame on FAST.
+
+      This frame is specified by a CK kernel that defines the orientation of a
+      "virtual instrument" on TS1 that is in fact the TS1_FAC B-field-aligned
+      frame defined by:
+
+           Z: Along the IGRF-14 model magnetic field at the spacecraft location,
+              expressed in the GEO frame
+           Y: Direction of Z_FAC x R_GEO (R = Earth to spacecraft vector in the
+              GEO frame)  (East)
+           X: Y_FAC cross Z_FAC direction  (Outwards)
+
+      CAUTION: This frame is valid ONLY for calculations done at the location of
+               the spacecraft, as the IGRF-14 vectors are calculated specifically
+               at that location, at the epoch when the spacecraft is there,
+               according to the available ephemerides.
+
+
+Field Velocity Coordinates (TS1_FVC) Science Frame:
+---------------------------------------------------------
+
+      This is the Field Velocity Coordinates frame. It is an implementation of
+      the second IGRF-14 B-field aligned frame used by FAST. They called it
+      Field-aligned/Velocity Coordinates (FAC_V).
+
+           Z: Along the IGRF-14 model magnetic field at the spacecraft location,
+              expressed in the GEO frame
+           Y: Direction of Z_FVC cross spacecraft_velocity_vector (as seen in
+              the GEO frame)
+           X: Y_FVC cross Z_FVC direction.
+
+      This frame is specified by using the B-field-aligned Z-axis of the TS1_FAC
+      frame, plus the spacecraft velocity as seen in the GEO frame. The latter
+      is probably a reasonable first approximation of the plasma frame...?
+
+      CAUTION: This frame is valid ONLY for calculations done at the location of
+               the spacecraft, as the IGRF-14 vectors are calculated specifically
+               at that location, at the epoch when the spacecraft is there,
+               according to the available ephemerides.
+
+
+TRACERS Field Sun (TS1_TFS) Science Frame:
+---------------------------------------------------------
+
+      The TRACERS Field Sun frame defines a frame that uses the IGRF-14 B
+      direction and the spacecraft-to-Sun direction as the two defining vectors,
+      with the former being the primary direction.
+
+           Z: Along the IGRF-14 model magnetic field at the spacecraft location.
+           Y: Direction of Z_TFS cross spacecraft-to-Sun vector, with the
+              latter being the true_of_epoch, geometric, vector from the
+              spacecraft to the Sun
+           X: Y_TFS cross Z_TFS direction.
+
+      CAUTION: This frame is valid ONLY for calculations done at the location of
+               the spacecraft, as the IGRF-14 vectors are calculated
+               specifically at that location, at the epoch when the spacecraft
+               is there, according to the available ephemerides.
+
+
+TRACERS Spin Sun (TS1_TSS) Science Frame:
+---------------------------------------------------------
+
+      This is a frame that uses the spacecraft spin axis as the Z-axis, and the
+      spacecraft-to-Sun direction as the second defining vector.
+
+           Z: Same as Z_TSB.
+           Y: Direction of Z_TSS cross spacecraft-to-Sun vector, with the
+              latter being the true_of_epoch, geometric, vector from the
+              spacecraft to the Sun
+           X: Y_TSS cross Z_TSS direction. The +X direction then pointing
+              roughly sunward.
